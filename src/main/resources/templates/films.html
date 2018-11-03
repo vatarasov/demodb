@@ -11,20 +11,24 @@
         <div class="center">
             <form id="search" action="films"></form>
             <div class="search">
-                <input type="text" name="str" form="search" placeholder="&#128269;">
+                <input type="text" name="str" form="search" placeholder="&#128269;" th:value="${search}">
             </div>
             <div class="search_extra">
                 <div>
                     <span>Год:</span>
-                    <label th:each="year : ${years}">
-                        <input type="checkbox" th:name="'year_'+${year}" class="search_extra_opt" form="search">
+                    <label th:each="year : ${allYears}" th:attrappend="style=${years.contains(year)}?'text-decoration:underline'">
+                        <input type="checkbox" th:name="'year_'+${year}" class="search_extra_opt" form="search"
+                               th:attrappend="checked=${years.contains(year)}?checked"
+                               onclick="this.parentNode.style.textDecoration=this.checked ? 'underline' : 'none';">
                         [[${year}]]
                     </label>
                 </div>
                 <div>
                     <span>Жанр:</span>
-                    <label th:each="genre : ${genres}">
-                        <input type="checkbox" th:name="'genre_'+${genre}" class="search_extra_opt" form="search">
+                    <label th:each="genre : ${allGenres}" th:attrappend="style=${genres.contains(genre)}?'text-decoration:underline'">
+                        <input type="checkbox" th:name="'genre_'+${genre}" class="search_extra_opt" form="search"
+                               th:attrappend="checked=${genres.contains(genre)}?checked"
+                               onclick="this.parentNode.style.textDecoration=this.checked ? 'underline' : 'none';">
                         [[${genre}]]
                     </label>
                 </div>
