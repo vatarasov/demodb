@@ -1,9 +1,6 @@
 package ru.vtarasov.demodb.web;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
@@ -13,8 +10,10 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.vtarasov.demodb.datasource.DataSourceFactory;
-import ru.vtarasov.demodb.model.GenresFinder;
-import ru.vtarasov.demodb.model.YearFinder;
+import ru.vtarasov.demodb.datasource.FilmsFinder;
+import ru.vtarasov.demodb.datasource.GenresFinder;
+import ru.vtarasov.demodb.datasource.YearsFinder;
+import ru.vtarasov.demodb.model.Film;
 
 /**
  * @author vtarasov
@@ -26,33 +25,45 @@ public class FilmsController {
     @Autowired
     private DataSourceFactory dsFactory;
 
+    @Autowired
+    private YearsFinder yearsFinder;
+
+    @Autowired
+    private GenresFinder genresFinder;
+
+    @Autowired
+    private FilmsFinder filmsFinder;
+
     @GetMapping("/films")
-    public String list(@RequestParam(name = "str", required = false) String search, HttpServletRequest request, ModelMap model) throws SQLException {
+    public String list(@RequestParam(name = "str", required = false) String search, HttpServletRequest request, ModelMap model) throws Exception {
         Map<String, String[]> params = request.getParameterMap();
 
-        int[] allYears = YearFinder.findYears(dsFactory.get());
+        int[] allYears = yearsFinder.findYears();
 
         Set<Integer> years = new HashSet<>();
-        for (int year : YearFinder.findYears(dsFactory.get())) {
+        for (int year : allYears) {
             if (params.containsKey("year_" + year)) {
                 years.add(year);
             }
         }
 
-        String[] allGenres = GenresFinder.findGenres(dsFactory.get());
+        String[] allGenres = genresFinder.findGenres();
 
         Set<String> genres = new HashSet<>();
-        for (String genre : GenresFinder.findGenres(dsFactory.get())) {
+        for (String genre : allGenres) {
             if (params.containsKey("genre_" + genre)) {
                 genres.add(genre);
             }
         }
+
+        Film[] films = filmsFinder.findFilms(search, years, genres);
 
         model.addAttribute("search", search);
         model.addAttribute("years", years);
         model.addAttribute("genres", genres);
         model.addAttribute("allYears", allYears);
         model.addAttribute("allGenres", allGenres);
+        model.addAttribute("films", films);
 
         return "films";
     }

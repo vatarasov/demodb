@@ -34,7 +34,15 @@
                 </div>
             </div>
             <div class="wall">
-                Welcome!
+                <div th:each="film : ${films}">
+                    <span class="title">Название: </span><span th:text="${film.name}"/><br>
+                    <span class="title">Год: </span><span th:text="${film.year}"/><br>
+                    <span class="title">Жанр: </span><span th:text="${film.genre != null ? film.genre : ''}"/><br>
+                    <span class="title">Киностудия: </span><span th:text="${film.factory != null ? film.factory.name : ''}"/><br>
+                    <span class="title">Режиссер: </span><span th:text="${film.producer != null ? film.producer.name : ''}"/><br>
+                    <span class="title">Актеры: </span><span th:text="${film.starsToString()}"/><br>
+                    <hr>
+                </div>
             </div>
         </div>
     </body>

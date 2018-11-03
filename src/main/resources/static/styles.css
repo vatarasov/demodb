@@ -48,3 +48,7 @@ input.search_extra_opt {
 div.wall {
 
 }
+
+span.title {
+    font-weight: bold;
+}

@@ -1,19 +1,24 @@
-package ru.vtarasov.demodb.model;
+package ru.vtarasov.demodb.datasource;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
-import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author vtarasov
  * @since 04.11.18
  */
-public class YearFinder {
+@Service
+public class YearsFinderImpl implements YearsFinder {
 
-    public static int[] findYears(DataSource ds) throws SQLException {
-        try (Connection conn = ds.getConnection();
+    @Autowired
+    private DataSourceFactory dsf;
+
+    @Override
+    public int[] findYears() throws Exception {
+        try (Connection conn = dsf.get().getConnection();
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select count(distinct year) from Film")) {
 
