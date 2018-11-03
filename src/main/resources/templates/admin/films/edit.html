@@ -1,0 +1,38 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Film</title>
+</head>
+<body>
+<form method="post">
+    Film name:
+    <input type="text" name="name" th:value="${film.name}" required><br>
+    Year:
+    <input type="text" name="year" th:value="${film.year}" required><br>
+    Genre:
+    <input type="text" name="genre" th:value="${film.genre}"><br>
+    Factory:
+    <select name="factory">
+        <option value="null"></option>>
+        <option th:each="factory : ${factories}" th:value="${factory.id}" th:text="${factory.name}"
+                th:attrappend="selected=${film.factory != null && film.factory.id == factory.id}?selected"/>
+    </select><br>
+    Stars:
+    <select name="stars" multiple>
+        <option value="null"></option>>
+        <option th:each="star : ${mans}" th:value="${star.id}" th:text="${star.name}"/>
+    </select><br>
+    Producer:
+    <select name="producer">
+        <option value="null"></option>>
+        <option th:each="producer : ${mans}" th:value="${producer.id}" th:text="${producer.name}"
+                th:attrappend="selected=${film.producer != null && film.producer.id == producer.id}?selected"/>
+    </select><br>
+    Description:
+    <input type="textarea" name="description" th:value="${film.description}"><br>
+    <input type="submit" value="Edit">
+</form>
+</body>
+</html>

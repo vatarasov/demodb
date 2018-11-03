@@ -1,0 +1,50 @@
+body {
+    background: #eaeaea;
+}
+
+#admin {
+    float: right;
+}
+
+div.center {
+    width: 70%;
+    margin: auto;
+}
+
+div.center > div {
+    box-shadow: 5px 5px #dadada;
+    margin: 10px auto;
+    background: #fff;
+    padding: 10px;
+}
+
+div.search {
+    border-radius: 10px;
+}
+
+div.search > input {
+    width: 99%;
+    padding: 5px;
+    border-style: solid;
+    border-color: #eaeaea;
+}
+
+div.center > div.search_extra {
+    box-shadow: none;
+    background: #eaeaea;
+}
+
+div.search_extra > div {
+    padding: 5px;
+}
+
+input.search_extra_opt {
+    margin: 0 0 0 10px;
+    text-decoration:underline;
+    cursor:pointer;
+    display: none;
+}
+
+div.wall {
+
+}

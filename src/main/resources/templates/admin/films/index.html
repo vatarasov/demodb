@@ -1,0 +1,38 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Films</title>
+    <link rel="stylesheet" href="../admin.css">
+</head>
+<body>
+    <a class="add" href="films/add">Add new</a>
+    <table>
+        <tr>
+            <th>Film</th>
+            <th>Year</th>
+            <th>Genre</th>
+            <th>Factory</th>
+            <th>Stars</th>
+            <th>Producer</th>
+            <th></th>
+            <th></th>
+        <tr>
+        <tr th:each="film : ${films}">
+            <td th:text="${film.name}"/>
+            <td th:text="${film.year}"/>
+            <td th:text="${film.genre != null ? film.genre : ''}"/>
+            <td th:text="${film.factory != null ? film.factory.name : ''}"/>
+            <td th:text="${film.starsToString()}"/>
+            <td th:text="${film.producer != null ? film.producer.name : ''}"/>
+            <td class="edit">
+                <a th:href="'films/' + ${film.id} + '/edit'">&#128393;</a>
+            </td>
+            <td class="delete">
+                <a th:href="'films/' + ${film.id} + '/delete'">&#10008;</a>
+            </td>
+        <tr>
+    </table>
+</body>
+</html>

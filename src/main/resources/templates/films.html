@@ -1,0 +1,37 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Films</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <a id="admin" href="admin">Admin</a>
+        <div class="center">
+            <form id="search" action="films"></form>
+            <div class="search">
+                <input type="text" name="str" form="search" placeholder="&#128269;">
+            </div>
+            <div class="search_extra">
+                <div>
+                    <span>Год:</span>
+                    <label th:each="year : ${years}">
+                        <input type="checkbox" th:name="'year_'+${year}" class="search_extra_opt" form="search">
+                        [[${year}]]
+                    </label>
+                </div>
+                <div>
+                    <span>Жанр:</span>
+                    <label th:each="genre : ${genres}">
+                        <input type="checkbox" th:name="'genre_'+${genre}" class="search_extra_opt" form="search">
+                        [[${genre}]]
+                    </label>
+                </div>
+            </div>
+            <div class="wall">
+                Welcome!
+            </div>
+        </div>
+    </body>
+</html>

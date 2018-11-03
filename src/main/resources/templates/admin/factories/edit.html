@@ -1,0 +1,21 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Factory</title>
+</head>
+<body>
+    <form method="post">
+        Factory name:
+        <input type="text" name="name" th:value="${factory.name}" required><br>
+        Country:
+        <select name="country">
+            <option value="null"></option>>
+            <option th:each="country : ${countries}" th:value="${country.id}" th:text="${country.name}"
+                    th:attrappend="selected=${factory.country != null && factory.country.id == country.id}?selected"/>
+        </select><br>
+        <input type="submit" value="Edit">
+    </form>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mans</title>
+    <link rel="stylesheet" href="../admin.css">
+</head>
+<body>
+    <a class="add" href="mans/add">Add new</a>
+    <table>
+        <tr>
+            <th>Man</th>
+            <th>Country</th>
+            <th></th>
+            <th></th>
+        <tr>
+        <tr th:each="man : ${mans}">
+            <td th:text="${man.name}"/>
+            <td th:text="${man.country != null ? man.country.name : ''}"/>
+            <td class="edit">
+                <a th:href="'mans/' + ${man.id} + '/edit'">&#128393;</a>
+            </td>
+            <td class="delete">
+                <a th:href="'mans/' + ${man.id} + '/delete'">&#10008;</a>
+            </td>
+        <tr>
+    </table>
+</body>
+</html>
