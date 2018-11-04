@@ -9,9 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.vtarasov.demodb.datasource.CountryGateway;
+import ru.vtarasov.demodb.datasource.CountryFinder;
 import ru.vtarasov.demodb.datasource.DataSourceFactory;
-import ru.vtarasov.demodb.datasource.FactoryGateway;
+import ru.vtarasov.demodb.datasource.FactoryFinder;
+import ru.vtarasov.demodb.datasource.FactoryRowGatewayImpl;
 import ru.vtarasov.demodb.model.Country;
 import ru.vtarasov.demodb.model.Factory;
 
@@ -26,21 +27,21 @@ public class FactoriesController {
     private DataSourceFactory dsFactory;
 
     @Autowired
-    private CountryGateway countryGateway;
+    private CountryFinder countryFinder;
 
     @Autowired
-    private FactoryGateway factoryGateway;
+    private FactoryFinder factoryFinder;
 
     @GetMapping("admin/factories")
     public String index(ModelMap model) throws Exception {
-        List<Factory> factories = factoryGateway.list().stream().map(Factory::new).collect(Collectors.toList());
+        List<Factory> factories = factoryFinder.list().stream().map(Factory::new).collect(Collectors.toList());
         model.addAttribute("factories", factories);
         return "admin/factories/index";
     }
 
     @GetMapping("admin/factories/add")
     public String getAdd(ModelMap model) throws Exception {
-        List<Country> countries = countryGateway.list().stream().map(Country::new).collect(Collectors.toList());
+        List<Country> countries = countryFinder.list().stream().map(Country::new).collect(Collectors.toList());
         model.addAttribute("countries", countries);
 
         return "admin/factories/add";
@@ -48,20 +49,22 @@ public class FactoriesController {
 
     @PostMapping("admin/factories/add")
     public String add(@RequestParam String name, @RequestParam String country) throws Exception {
-        Integer countryId = null;
+        Factory factory = new Factory(new FactoryRowGatewayImpl(dsFactory));
+        factory.setName(name);
+
         if (country != null && !"null".equals(country)) {
-            countryId = Integer.parseInt(country);
+            factory.setCountry(new Country(countryFinder.load(Integer.parseInt(country))));
         }
 
-        factoryGateway.save(name, countryId);
+        factory.getGateway().save();
 
         return "redirect:/admin/factories";
     }
 
     @GetMapping("admin/factories/{id}/edit")
     public String getEdit(ModelMap model, @PathVariable int id) throws Exception  {
-        Factory factory = new Factory(factoryGateway.load(id));
-        List<Country> countries = countryGateway.list().stream().map(Country::new).collect(Collectors.toList());
+        Factory factory = new Factory(factoryFinder.load(id));
+        List<Country> countries = countryFinder.list().stream().map(Country::new).collect(Collectors.toList());
 
         model.addAttribute("factory", factory);
         model.addAttribute("countries", countries);
@@ -71,19 +74,25 @@ public class FactoriesController {
 
     @PostMapping("admin/factories/{id}/edit")
     public String edit(@PathVariable int id, @RequestParam String name, @RequestParam String country) throws Exception {
-        Integer countryId = null;
+        Factory factory = new Factory(factoryFinder.load(id));
+        factory.setId(id);
+        factory.setName(name);
+
         if (country != null && !"null".equals(country)) {
-            countryId = Integer.parseInt(country);
+            factory.setCountry(new Country(countryFinder.load(Integer.parseInt(country))));
+        } else {
+            factory.setCountry(null);
         }
 
-        factoryGateway.update(id, name, countryId);
+        factory.getGateway().update();
 
         return "redirect:/admin/factories";
     }
 
     @GetMapping("admin/factories/{id}/delete")
     public String delete(@PathVariable int id) throws Exception {
-        factoryGateway.delete(id);
+        Factory factory = new Factory(factoryFinder.load(id));
+        factory.getGateway().delete();
 
         return "redirect:/admin/factories";
     }

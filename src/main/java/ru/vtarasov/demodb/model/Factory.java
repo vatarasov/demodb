@@ -1,46 +1,45 @@
 package ru.vtarasov.demodb.model;
 
 import java.util.Map;
+import ru.vtarasov.demodb.datasource.FactoryRowGateway;
 
 /**
  * @author vtarasov
  * @since 02.11.18
  */
 public class Factory {
-    private int id;
-    private String name;
-    private Country country;
 
-    public Factory(Map<String, Object> map) {
-        this.id = (Integer) map.get("id");
-        this.name = (String) map.get("name");
+    private FactoryRowGateway gateway;
 
-        if (map.containsKey("country")) {
-            this.country = new Country((Map<String, Object>)map.get("country"));
-        }
+    public Factory(FactoryRowGateway gateway) {
+        this.gateway = gateway;
+    }
+
+    public FactoryRowGateway getGateway() {
+        return gateway;
     }
 
     public int getId() {
-        return id;
+        return gateway.getId();
     }
 
     public void setId(int id) {
-        this.id = id;
+        gateway.setId(id);
     }
 
     public String getName() {
-        return name;
+        return gateway.getName();
     }
 
     public void setName(String name) {
-        this.name = name;
+        gateway.setName(name);
     }
 
     public Country getCountry() {
-        return country;
+        return gateway.getCountry();
     }
 
     public void setCountry(Country country) {
-        this.country = country;
+        gateway.setCountry(country);
     }
 }
