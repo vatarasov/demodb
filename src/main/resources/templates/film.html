@@ -10,7 +10,7 @@
     <div class="center">
         <div class="wall">
             <div class="title" th:text="${film.name}"/>
-            <span class="title">Название: </span><span th:text="${film.name}"/><br>
+            <div><img th:src="'/film/' + ${film.id} + '/image'" alt="Image not loaded" width="350px" height="500px"></div>
             <span class="title">Год: </span><span th:text="${film.year}"/><br>
             <span class="title">Жанр: </span><span th:text="${film.genre != null ? film.genre : ''}"/><br>
             <span class="title">Киностудия: </span><span th:text="${film.factory != null ? film.factory.name : ''}"/><br>

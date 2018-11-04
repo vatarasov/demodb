@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import ru.vtarasov.demodb.datasource.FactoryFinder;
 import ru.vtarasov.demodb.datasource.FilmFinder;
 import ru.vtarasov.demodb.datasource.ManFinder;
@@ -62,7 +63,7 @@ public class FilmsController {
     @Transactional
     public String add(@RequestParam String name, @RequestParam int year, @RequestParam String genre,
         @RequestParam String factory, @RequestParam String[] stars, @RequestParam String producer,
-        @RequestParam String description) throws Exception {
+        @RequestParam String description, @RequestParam MultipartFile image) throws Exception {
 
         Film film = new Film();
         film.setName(name);
@@ -82,6 +83,10 @@ public class FilmsController {
 
         if (producer != null && !"null".equals(producer)) {
             film.setProducer(manFinder.load(Integer.parseInt(producer)));
+        }
+
+        if (!image.isEmpty()) {
+            film.setImage(image.getBytes());
         }
 
         em.persist(film);
@@ -106,7 +111,7 @@ public class FilmsController {
     @Transactional
     public String edit(@PathVariable int id, @RequestParam String name, @RequestParam int year, @RequestParam String genre,
         @RequestParam String factory, @RequestParam String[] stars, @RequestParam String producer,
-        @RequestParam String description) throws Exception {
+        @RequestParam String description, @RequestParam MultipartFile image) throws Exception {
 
         Film film = filmFinder.load(id);
         film.setName(name);
@@ -130,6 +135,10 @@ public class FilmsController {
             film.setProducer(manFinder.load(Integer.parseInt(producer)));
         } else {
             film.setProducer(null);
+        }
+
+        if (!image.isEmpty()) {
+            film.setImage(image.getBytes());
         }
 
         em.merge(film);

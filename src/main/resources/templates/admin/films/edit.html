@@ -6,7 +6,7 @@
     <title>Edit Film</title>
 </head>
 <body>
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     Film name:
     <input type="text" name="name" th:value="${film.name}" required><br>
     Year:
@@ -32,6 +32,8 @@
     </select><br>
     Description:
     <textarea name="description" th:value="${film.description}" rows="10"></textarea><br>
+    Image:
+    <input type="file" name="image"><br>
     <input type="submit" value="Edit">
 </form>
 </body>

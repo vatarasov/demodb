@@ -2,13 +2,18 @@ package ru.vtarasov.demodb.model;
 
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
+import org.hibernate.annotations.Type;
+
+import static javax.persistence.FetchType.LAZY;
 
 /**
  * @author vtarasov
@@ -38,6 +43,11 @@ public class Film {
     private Man producer;
 
     private String description;
+
+    @Lob
+    @Basic(fetch = LAZY)
+    @Type(type="org.hibernate.type.BinaryType")
+    private byte[] image;
 
     public int getId() {
         return id;
@@ -101,6 +111,14 @@ public class Film {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 
     public String starsToString() {

@@ -35,6 +35,7 @@
             </div>
             <div class="wall">
                 <div th:each="film : ${films}">
+                    <div><img th:src="'/film/' + ${film.id} + '/image'" alt="Image not loaded" width="175px" height="250px"></div>
                     <span class="title">Название: </span><span th:text="${film.name}"/><br>
                     <span class="title">Год: </span><span th:text="${film.year}"/><br>
                     <span class="title">Жанр: </span><span th:text="${film.genre != null ? film.genre : ''}"/><br>
