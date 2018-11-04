@@ -1,6 +1,7 @@
 package ru.vtarasov.demodb.web;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
@@ -10,7 +11,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.vtarasov.demodb.datasource.DataSourceFactory;
-import ru.vtarasov.demodb.datasource.FilmsFinder;
 import ru.vtarasov.demodb.datasource.GenresFinder;
 import ru.vtarasov.demodb.datasource.YearsFinder;
 import ru.vtarasov.demodb.model.Film;
@@ -30,9 +30,6 @@ public class FilmsController {
 
     @Autowired
     private GenresFinder genresFinder;
-
-    @Autowired
-    private FilmsFinder filmsFinder;
 
     @GetMapping("/films")
     public String list(@RequestParam(name = "str", required = false) String search, HttpServletRequest request, ModelMap model) throws Exception {
@@ -56,7 +53,7 @@ public class FilmsController {
             }
         }
 
-        Film[] films = filmsFinder.findFilms(search, years, genres);
+        List<Film> films = Film.list(dsFactory.get(), search, years, genres);
 
         model.addAttribute("search", search);
         model.addAttribute("years", years);

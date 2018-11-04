@@ -7,8 +7,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.sql.DataSource;
 
 /**
@@ -230,6 +230,40 @@ public class Film {
                     }
                 }
                 film.setStars(stars.toArray(new Man[0]));
+
+                films.add(film);
+            }
+        }
+
+        return films;
+    }
+
+    public static List<Film> list(DataSource ds, String search, Set<Integer> years, Set<String> genres) throws SQLException {
+
+        String sql = "select id from Film where 1 = 1";
+
+        if (search != null && !"".equals(search.trim())) {
+            sql += " and name like '%" + search.trim() + "%'";
+        }
+
+        if (!years.isEmpty()) {
+            sql += " and year in (" + years.stream().map(String::valueOf).collect(Collectors.joining(",")) + ")";
+        }
+
+        if (!genres.isEmpty()) {
+            sql += " and genre in ('" + String.join("','", genres) + "')";
+        }
+
+        sql += " order by name";
+
+        List<Film> films = new ArrayList<>();
+
+        try(Connection conn = ds.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql)
+        ) {
+            while (rs.next()) {
+                Film film = Film.load(ds, rs.getInt(1));
 
                 films.add(film);
             }
