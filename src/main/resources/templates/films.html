@@ -41,6 +41,7 @@
                     <span class="title">Киностудия: </span><span th:text="${film.factory != null ? film.factory.name : ''}"/><br>
                     <span class="title">Режиссер: </span><span th:text="${film.producer != null ? film.producer.name : ''}"/><br>
                     <span class="title">Актеры: </span><span th:text="${film.starsToString()}"/><br>
+                    <div class="more"><a th:href="'film/' + ${film.id}">More...</a></div>
                     <hr>
                 </div>
             </div>

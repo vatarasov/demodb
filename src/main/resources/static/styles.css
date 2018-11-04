@@ -52,3 +52,17 @@ div.wall {
 span.title {
     font-weight: bold;
 }
+
+div.more {
+    text-align: right;
+}
+
+div.title {
+    font-weight: bold;
+    font-size: x-large;
+    text-align: center;
+}
+
+div.description {
+    text-align: justify;
+}

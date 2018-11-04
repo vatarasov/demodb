@@ -29,7 +29,7 @@
             <option th:each="producer : ${mans}" th:value="${producer.id}" th:text="${producer.name}"/>
         </select><br>
         Description:
-        <input type="textarea" name="description"><br>
+        <textarea  name="description" rows="10"></textarea><br>
         <input type="submit" value="Add">
     </form>
 </body>

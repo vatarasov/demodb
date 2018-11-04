@@ -31,7 +31,7 @@
                 th:attrappend="selected=${film.producer != null && film.producer.id == producer.id}?selected"/>
     </select><br>
     Description:
-    <input type="textarea" name="description" th:value="${film.description}"><br>
+    <textarea name="description" th:value="${film.description}" rows="10"></textarea><br>
     <input type="submit" value="Edit">
 </form>
 </body>
