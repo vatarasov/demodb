@@ -1,92 +1,109 @@
 package ru.vtarasov.demodb.model;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
-import ru.vtarasov.demodb.datasource.FilmRowGateway;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 
 /**
  * @author vtarasov
  * @since 02.11.18
  */
+@Entity
 public class Film {
+    @Id
+    @SequenceGenerator(name="film_id_seq", sequenceName="film_id_seq")
+    private int id;
 
-    private FilmRowGateway gateway;
 
-    public Film(FilmRowGateway gateway) {
-        this.gateway = gateway;
-    }
+    private String name;
+    private int year;
+    private String genre;
 
-    public FilmRowGateway getGateway() {
-        return gateway;
-    }
+    @ManyToOne
+    @JoinColumn(name = "factory")
+    private Factory factory;
+
+    @ManyToMany
+    @JoinTable(name = "filmstar", joinColumns = @JoinColumn(name = "film"), inverseJoinColumns = @JoinColumn(name = "star"))
+    private Set<Man> stars;
+
+    @ManyToOne
+    @JoinColumn(name = "producer")
+    private Man producer;
+
+    private String description;
 
     public int getId() {
-        return gateway.getId();
+        return id;
     }
 
     public void setId(int id) {
-        gateway.setId(id);
+        this.id = id;
     }
 
     public String getName() {
-        return gateway.getName();
+        return name;
     }
 
     public void setName(String name) {
-        gateway.setName(name);
+        this.name = name;
     }
 
     public int getYear() {
-        return gateway.getYear();
+        return year;
     }
 
     public void setYear(int year) {
-        gateway.setYear(year);
+        this.year = year;
     }
 
     public String getGenre() {
-        return gateway.getGenre();
+        return genre;
     }
 
     public void setGenre(String genre) {
-        gateway.setGenre(genre);
+        this.genre = genre;
     }
 
     public Factory getFactory() {
-        return gateway.getFactory();
+        return factory;
     }
 
     public void setFactory(Factory factory) {
-        gateway.setFactory(factory);
+        this.factory = factory;
     }
 
-    public Man[] getStars() {
-        return gateway.getStars();
+    public Set<Man> getStars() {
+        return stars;
     }
 
-    public void setStars(Man[] stars) {
-        gateway.setStars(stars);
-    }
-
-    public String starsToString() {
-        return Arrays.stream(gateway.getStars()).map(Man::getName).collect(Collectors.joining(", "));
+    public void setStars(Set<Man> stars) {
+        this.stars = stars;
     }
 
     public Man getProducer() {
-        return gateway.getProducer();
+        return producer;
     }
 
     public void setProducer(Man producer) {
-        gateway.setProducer(producer);
+        this.producer = producer;
     }
 
     public String getDescription() {
-        return gateway.getDescription();
+        return description;
     }
 
     public void setDescription(String description) {
-        gateway.setDescription(description);
+        this.description = description;
+    }
+
+    public String starsToString() {
+        return stars.stream().map(Man::getName).collect(Collectors.joining(", "));
     }
 }

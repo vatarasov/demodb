@@ -1,45 +1,49 @@
 package ru.vtarasov.demodb.model;
 
-import java.util.Map;
-import ru.vtarasov.demodb.datasource.FactoryRowGateway;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 
 /**
  * @author vtarasov
  * @since 02.11.18
  */
+@Entity
 public class Factory {
 
-    private FactoryRowGateway gateway;
+    @Id
+    @SequenceGenerator(name="factory_id_seq", sequenceName="factory_id_seq")
+    private int id;
 
-    public Factory(FactoryRowGateway gateway) {
-        this.gateway = gateway;
-    }
+    private String name;
 
-    public FactoryRowGateway getGateway() {
-        return gateway;
-    }
+    @ManyToOne
+    @JoinColumn(name = "country")
+    private Country country;
 
     public int getId() {
-        return gateway.getId();
+        return id;
     }
 
     public void setId(int id) {
-        gateway.setId(id);
+        this.id = id;
     }
 
     public String getName() {
-        return gateway.getName();
+        return name;
     }
 
     public void setName(String name) {
-        gateway.setName(name);
+        this.name = name;
     }
 
     public Country getCountry() {
-        return gateway.getCountry();
+        return country;
     }
 
     public void setCountry(Country country) {
-        gateway.setCountry(country);
+        this.country = country;
     }
 }

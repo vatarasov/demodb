@@ -24,7 +24,7 @@ public class FilmController {
 
     @GetMapping("/film/{id}")
     public String index(ModelMap model, @PathVariable int id) throws Exception {
-        Film film = new Film(filmFinder.load(id));
+        Film film = filmFinder.load(id);
         model.addAttribute("film", film);
 
         return "film";

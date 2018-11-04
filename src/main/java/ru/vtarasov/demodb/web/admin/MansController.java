@@ -2,8 +2,11 @@ package ru.vtarasov.demodb.web.admin;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.vtarasov.demodb.datasource.CountryFinder;
 import ru.vtarasov.demodb.datasource.DataSourceFactory;
 import ru.vtarasov.demodb.datasource.ManFinder;
-import ru.vtarasov.demodb.datasource.ManRowGateway;
-import ru.vtarasov.demodb.datasource.ManRowGatewayImpl;
 import ru.vtarasov.demodb.model.Country;
 import ru.vtarasov.demodb.model.Man;
 
@@ -24,8 +25,8 @@ import ru.vtarasov.demodb.model.Man;
 @Controller
 public class MansController {
 
-    @Autowired
-    private DataSourceFactory dsFactory;
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
     private CountryFinder countryFinder;
@@ -34,38 +35,39 @@ public class MansController {
     private ManFinder manFinder;
 
     @GetMapping("admin/mans")
-    public String index(ModelMap model) throws Exception {
-        List<Man> mans = manFinder.list().stream().map(Man::new).collect(Collectors.toList());
+    public String index(ModelMap model) {
+        List<Man> mans = manFinder.list();
         model.addAttribute("mans", mans);
         return "admin/mans/index";
     }
 
     @GetMapping("admin/mans/add")
-    public String getAdd(ModelMap model) throws Exception {
-        List<Country> countries = countryFinder.list().stream().map(Country::new).collect(Collectors.toList());
+    public String getAdd(ModelMap model) {
+        List<Country> countries = countryFinder.list();
         model.addAttribute("countries", countries);
 
         return "admin/mans/add";
     }
 
     @PostMapping("admin/mans/add")
-    public String add(@RequestParam String name, @RequestParam String country) throws Exception {
-        Man man = new Man(new ManRowGatewayImpl(dsFactory));
+    @Transactional
+    public String add(@RequestParam String name, @RequestParam String country) {
+        Man man = new Man();
         man.setName(name);
 
         if (country != null && !"null".equals(country)) {
-            man.setCountry(new Country(countryFinder.load(Integer.parseInt(country))));
+            man.setCountry(countryFinder.load(Integer.parseInt(country)));
         }
 
-        man.getGateway().save();
+        em.persist(man);
 
         return "redirect:/admin/mans";
     }
 
     @GetMapping("admin/mans/{id}/edit")
-    public String getEdit(ModelMap model, @PathVariable int id) throws Exception  {
-        Man man = new Man(manFinder.load(id));
-        List<Country> countries = countryFinder.list().stream().map(Country::new).collect(Collectors.toList());
+    public String getEdit(ModelMap model, @PathVariable int id)  {
+        Man man = manFinder.load(id);
+        List<Country> countries = countryFinder.list();
 
         model.addAttribute("man", man);
         model.addAttribute("countries", countries);
@@ -74,25 +76,27 @@ public class MansController {
     }
 
     @PostMapping("admin/mans/{id}/edit")
-    public String edit(@PathVariable int id, @RequestParam String name, @RequestParam String country) throws Exception {
-        Man man = new Man(manFinder.load(id));
+    @Transactional
+    public String edit(@PathVariable int id, @RequestParam String name, @RequestParam String country) {
+        Man man = manFinder.load(id);
         man.setName(name);
 
         if (country != null && !"null".equals(country)) {
-            man.setCountry(new Country(countryFinder.load(Integer.parseInt(country))));
+            man.setCountry(countryFinder.load(Integer.parseInt(country)));
         } else {
             man.setCountry(null);
         }
 
-        man.getGateway().update();
+        em.merge(man);
 
         return "redirect:/admin/mans";
     }
 
     @GetMapping("admin/mans/{id}/delete")
+    @Transactional
     public String delete(@PathVariable int id) throws Exception {
-        Man man = new Man(manFinder.load(id));
-        man.getGateway().delete();
+        Man man = manFinder.load(id);
+        em.remove(man);
 
         return "redirect:/admin/mans";
     }

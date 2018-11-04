@@ -1,35 +1,34 @@
 package ru.vtarasov.demodb.model;
 
-import ru.vtarasov.demodb.datasource.CountryRowGateway;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 /**
  * @author vtarasov
  * @since 02.11.18
  */
+@Entity
 public class Country {
-    private CountryRowGateway gateway;
+    @Id
+    @SequenceGenerator(name = "country_id_seq", sequenceName = "country_id_seq")
+    private int id;
 
-    public Country(CountryRowGateway gateway) {
-        this.gateway = gateway;
-    }
-
-    public CountryRowGateway getGateway() {
-        return gateway;
-    }
+    private String name;
 
     public int getId() {
-        return gateway.getId();
+        return id;
     }
 
     public void setId(int id) {
-        gateway.setId(id);
+        this.id = id;
     }
 
     public String getName() {
-        return gateway.getName();
+        return name;
     }
 
     public void setName(String name) {
-        gateway.setName(name);
+        this.name = name;
     }
 }

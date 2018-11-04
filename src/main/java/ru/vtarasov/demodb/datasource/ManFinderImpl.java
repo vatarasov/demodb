@@ -1,13 +1,10 @@
 package ru.vtarasov.demodb.datasource;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
-import ru.vtarasov.demodb.model.Country;
+import ru.vtarasov.demodb.model.Man;
 
 /**
  * @author vtarasov
@@ -16,57 +13,16 @@ import ru.vtarasov.demodb.model.Country;
 @Service
 public class ManFinderImpl implements ManFinder {
 
-    @Autowired
-    private DataSourceFactory dsf;
-
-    @Autowired
-    private CountryFinder countryFinder;
+    @PersistenceContext
+    private EntityManager em;
 
     @Override
-    public ManRowGateway load(int id) throws Exception {
-        try (Connection con = dsf.get().getConnection();
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("select id, name, country from Man where id = " + id)) {
-
-            while (rs.next()) {
-                ManRowGateway gateway = new ManRowGatewayImpl(dsf);
-                gateway.setId(rs.getInt(1));
-                gateway.setName(rs.getString(2));
-
-                Number country = (Number) rs.getObject(3);
-                if (country != null) {
-                    gateway.setCountry(new Country(countryFinder.load(country.intValue())));
-                }
-
-                return gateway;
-            }
-
-            return null;
-        }
+    public Man load(int id) {
+        return em.find(Man.class, id);
     }
 
     @Override
-    public List<ManRowGateway> list() throws Exception {
-        List<ManRowGateway> gateways = new ArrayList<>();
-
-        try (Connection con = dsf.get().getConnection();
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("select id, name, country from Man order by name")) {
-
-            while (rs.next()) {
-                ManRowGateway gateway = new ManRowGatewayImpl(dsf);
-                gateway.setId(rs.getInt(1));
-                gateway.setName(rs.getString(2));
-
-                Number country = (Number) rs.getObject(3);
-                if (country != null) {
-                    gateway.setCountry(new Country(countryFinder.load(country.intValue())));
-                }
-
-                gateways.add(gateway);
-            }
-        }
-
-        return gateways;
+    public List<Man> list() {
+        return em.createQuery("from " + Man.class.getName() + " order by name", Man.class).getResultList();
     }
 }

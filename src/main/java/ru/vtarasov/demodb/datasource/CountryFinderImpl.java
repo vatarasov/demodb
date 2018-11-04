@@ -5,8 +5,10 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
+import ru.vtarasov.demodb.model.Country;
 
 /**
  * @author vtarasov
@@ -15,44 +17,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class CountryFinderImpl implements CountryFinder {
 
-    @Autowired
-    private DataSourceFactory dsf;
+    @PersistenceContext
+    private EntityManager em;
 
     @Override
-    public CountryRowGateway load(int id) throws Exception {
-        try (Connection con = dsf.get().getConnection();
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("select id, name from Country where id = " + id)) {
-
-            while (rs.next()) {
-                CountryRowGateway gateway = new CountryRowGatewayImpl(dsf);
-                gateway.setId(rs.getInt(1));
-                gateway.setName(rs.getString(2));
-
-                return gateway;
-            }
-
-            return null;
-        }
+    public Country load(int id){
+        return em.find(Country.class, id);
     }
 
     @Override
-    public List<CountryRowGateway> list() throws Exception {
-        List<CountryRowGateway> gateways = new ArrayList<>();
-
-        try (Connection con = dsf.get().getConnection();
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("select id, name from Country order by name")) {
-
-            while (rs.next()) {
-                CountryRowGateway gateway = new CountryRowGatewayImpl(dsf);
-                gateway.setId(rs.getInt(1));
-                gateway.setName(rs.getString(2));
-
-                gateways.add(gateway);
-            }
-        }
-
-        return gateways;
+    public List<Country> list() {
+        return em.createQuery("from " + Country.class.getName() + " order by name", Country.class).getResultList();
     }
 }

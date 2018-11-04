@@ -58,7 +58,7 @@ public class FilmsController {
             }
         }
 
-        List<Film> films = filmFinder.list(search, years, genres).stream().map(Film::new).collect(Collectors.toList());
+        List<Film> films = filmFinder.list(search, years, genres);
 
         model.addAttribute("search", search);
         model.addAttribute("years", years);

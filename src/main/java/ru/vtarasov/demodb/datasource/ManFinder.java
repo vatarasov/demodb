@@ -1,12 +1,13 @@
 package ru.vtarasov.demodb.datasource;
 
 import java.util.List;
+import ru.vtarasov.demodb.model.Man;
 
 /**
  * @author vtarasov
  * @since 04.11.18
  */
 public interface ManFinder {
-    ManRowGateway load(int id) throws Exception;
-    List<ManRowGateway> list() throws Exception;
+    Man load(int id);
+    List<Man> list();
 }
