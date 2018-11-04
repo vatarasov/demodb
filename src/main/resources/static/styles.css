@@ -2,6 +2,10 @@ body {
     background: #eaeaea;
 }
 
+#fork-me {
+    position: absolute; top: 0; left: 0; border: 0;
+}
+
 #admin {
     float: right;
 }
