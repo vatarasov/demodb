@@ -1,8 +1,6 @@
 package ru.vtarasov.demodb.web.admin;
 
-import java.sql.SQLException;
 import java.util.List;
-import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -10,7 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.vtarasov.demodb.datasource.CountryMapper;
 import ru.vtarasov.demodb.datasource.DataSourceFactory;
+import ru.vtarasov.demodb.datasource.ManMapper;
 import ru.vtarasov.demodb.model.Country;
 import ru.vtarasov.demodb.model.Man;
 
@@ -24,41 +24,45 @@ public class MansController {
     @Autowired
     private DataSourceFactory dsFactory;
 
+    @Autowired
+    private CountryMapper countryMapper;
+
+    @Autowired
+    private ManMapper manMapper;
+
     @GetMapping("admin/mans")
-    public String index(ModelMap model) throws SQLException {
-        List<Man> mans = Man.list(dsFactory.get());
+    public String index(ModelMap model) throws Exception {
+        List<Man> mans = manMapper.list();
         model.addAttribute("mans", mans);
         return "admin/mans/index";
     }
 
     @GetMapping("admin/mans/add")
-    public String getAdd(ModelMap model) throws SQLException {
-        List<Country> countries = Country.list(dsFactory.get());
+    public String getAdd(ModelMap model) throws Exception {
+        List<Country> countries = countryMapper.list();
         model.addAttribute("countries", countries);
 
         return "admin/mans/add";
     }
 
     @PostMapping("admin/mans/add")
-    public String add(@RequestParam String name, @RequestParam String country) throws SQLException {
-        DataSource ds = dsFactory.get();
-
+    public String add(@RequestParam String name, @RequestParam String country) throws Exception {
         Man man = new Man();
         man.setName(name);
 
         if (country != null && !"null".equals(country)) {
-            man.setCountry(Country.load(ds, Integer.parseInt(country)));
+            man.setCountry(countryMapper.load(Integer.parseInt(country)));
         }
 
-        man.save(ds);
+        manMapper.save(man);
 
         return "redirect:/admin/mans";
     }
 
     @GetMapping("admin/mans/{id}/edit")
-    public String getEdit(ModelMap model, @PathVariable int id) throws SQLException  {
-        Man man = Man.load(dsFactory.get(), id);
-        List<Country> countries = Country.list(dsFactory.get());
+    public String getEdit(ModelMap model, @PathVariable int id) throws Exception  {
+        Man man = manMapper.load(id);
+        List<Country> countries = countryMapper.list();
 
         model.addAttribute("man", man);
         model.addAttribute("countries", countries);
@@ -67,29 +71,25 @@ public class MansController {
     }
 
     @PostMapping("admin/mans/{id}/edit")
-    public String edit(@PathVariable int id, @RequestParam String name, @RequestParam String country) throws SQLException {
-        DataSource ds = dsFactory.get();
-
-        Man man = Man.load(ds, id);
+    public String edit(@PathVariable int id, @RequestParam String name, @RequestParam String country) throws Exception {
+        Man man = manMapper.load(id);
         man.setName(name);
 
         if (country == null || "null".equals(country)) {
             man.setCountry(null);
         } else {
-            man.setCountry(Country.load(ds, Integer.parseInt(country)));
+            man.setCountry(countryMapper.load(Integer.parseInt(country)));
         }
 
-        man.update(ds);
+        manMapper.update(man);
 
         return "redirect:/admin/mans";
     }
 
     @GetMapping("admin/mans/{id}/delete")
-    public String delete(@PathVariable int id) throws SQLException {
-        DataSource ds = dsFactory.get();
-
-        Man man = Man.load(ds, id);
-        man.delete(ds);
+    public String delete(@PathVariable int id) throws Exception {
+        Man man = manMapper.load(id);
+        manMapper.delete(man);
 
         return "redirect:/admin/mans";
     }
