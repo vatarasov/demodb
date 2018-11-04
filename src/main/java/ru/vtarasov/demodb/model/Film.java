@@ -1,7 +1,10 @@
 package ru.vtarasov.demodb.model;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import javax.persistence.criteria.CriteriaBuilder.In;
 
 /**
  * @author vtarasov
@@ -19,6 +22,24 @@ public class Film {
     private Man producer;
 
     private String description;
+
+    public Film(Map<String, Object> map) {
+        id = (Integer) map.get("id");
+        name = (String) map.get("name");
+        year = (Integer) map.get("year");
+        genre = (String) map.get("genre");
+        description = (String) map.get("description");
+
+        if (map.containsKey("factory")) {
+            factory = new Factory((Map<String, Object>)map.get("factory"));
+        }
+
+        if (map.containsKey("producer")) {
+            producer = new Man((Map<String, Object>)map.get("producer"));
+        }
+
+        stars = ((List<Map<String, Object>>)map.get("stars")).stream().map(Man::new).collect(Collectors.toList()).toArray(new Man[0]);
+    }
 
     public int getId() {
         return id;

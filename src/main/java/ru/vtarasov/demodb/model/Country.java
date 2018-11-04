@@ -1,5 +1,7 @@
 package ru.vtarasov.demodb.model;
 
+import java.util.Map;
+
 /**
  * @author vtarasov
  * @since 02.11.18
@@ -7,6 +9,11 @@ package ru.vtarasov.demodb.model;
 public class Country {
     private int id;
     private String name;
+
+    public Country(Map<String, Object> map) {
+        id = (Integer) map.get("id");
+        name = (String) map.get("name");
+    }
 
     public int getId() {
         return id;

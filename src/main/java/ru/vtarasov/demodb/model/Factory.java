@@ -1,5 +1,7 @@
 package ru.vtarasov.demodb.model;
 
+import java.util.Map;
+
 /**
  * @author vtarasov
  * @since 02.11.18
@@ -8,6 +10,15 @@ public class Factory {
     private int id;
     private String name;
     private Country country;
+
+    public Factory(Map<String, Object> map) {
+        this.id = (Integer) map.get("id");
+        this.name = (String) map.get("name");
+
+        if (map.containsKey("country")) {
+            this.country = new Country((Map<String, Object>)map.get("country"));
+        }
+    }
 
     public int getId() {
         return id;

@@ -1,6 +1,7 @@
 package ru.vtarasov.demodb.web.admin;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -8,9 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.vtarasov.demodb.datasource.CountryMapper;
+import ru.vtarasov.demodb.datasource.CountryGateway;
 import ru.vtarasov.demodb.datasource.DataSourceFactory;
-import ru.vtarasov.demodb.datasource.ManMapper;
+import ru.vtarasov.demodb.datasource.ManGateway;
 import ru.vtarasov.demodb.model.Country;
 import ru.vtarasov.demodb.model.Man;
 
@@ -25,21 +26,21 @@ public class MansController {
     private DataSourceFactory dsFactory;
 
     @Autowired
-    private CountryMapper countryMapper;
+    private CountryGateway countryGateway;
 
     @Autowired
-    private ManMapper manMapper;
+    private ManGateway manGateway;
 
     @GetMapping("admin/mans")
     public String index(ModelMap model) throws Exception {
-        List<Man> mans = manMapper.list();
+        List<Man> mans = manGateway.list().stream().map(Man::new).collect(Collectors.toList());
         model.addAttribute("mans", mans);
         return "admin/mans/index";
     }
 
     @GetMapping("admin/mans/add")
     public String getAdd(ModelMap model) throws Exception {
-        List<Country> countries = countryMapper.list();
+        List<Country> countries = countryGateway.list().stream().map(Country::new).collect(Collectors.toList());
         model.addAttribute("countries", countries);
 
         return "admin/mans/add";
@@ -47,22 +48,20 @@ public class MansController {
 
     @PostMapping("admin/mans/add")
     public String add(@RequestParam String name, @RequestParam String country) throws Exception {
-        Man man = new Man();
-        man.setName(name);
-
+        Integer countryId = null;
         if (country != null && !"null".equals(country)) {
-            man.setCountry(countryMapper.load(Integer.parseInt(country)));
+            countryId = Integer.parseInt(country);
         }
 
-        manMapper.save(man);
+        manGateway.save(name, countryId);
 
         return "redirect:/admin/mans";
     }
 
     @GetMapping("admin/mans/{id}/edit")
     public String getEdit(ModelMap model, @PathVariable int id) throws Exception  {
-        Man man = manMapper.load(id);
-        List<Country> countries = countryMapper.list();
+        Man man = new Man(manGateway.load(id));
+        List<Country> countries = countryGateway.list().stream().map(Country::new).collect(Collectors.toList());
 
         model.addAttribute("man", man);
         model.addAttribute("countries", countries);
@@ -72,24 +71,19 @@ public class MansController {
 
     @PostMapping("admin/mans/{id}/edit")
     public String edit(@PathVariable int id, @RequestParam String name, @RequestParam String country) throws Exception {
-        Man man = manMapper.load(id);
-        man.setName(name);
-
-        if (country == null || "null".equals(country)) {
-            man.setCountry(null);
-        } else {
-            man.setCountry(countryMapper.load(Integer.parseInt(country)));
+        Integer countryId = null;
+        if (country != null && !"null".equals(country)) {
+            countryId = Integer.parseInt(country);
         }
 
-        manMapper.update(man);
+        manGateway.update(id, name, countryId);
 
         return "redirect:/admin/mans";
     }
 
     @GetMapping("admin/mans/{id}/delete")
     public String delete(@PathVariable int id) throws Exception {
-        Man man = manMapper.load(id);
-        manMapper.delete(man);
+        manGateway.delete(id);
 
         return "redirect:/admin/mans";
     }

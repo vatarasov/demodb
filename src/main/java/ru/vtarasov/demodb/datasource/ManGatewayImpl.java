@@ -4,74 +4,74 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.vtarasov.demodb.model.Man;
-
 /**
  * @author vtarasov
  * @since 04.11.18
  */
 @Service
-public class ManMapperImpl implements ManMapper {
+public class ManGatewayImpl implements ManGateway {
 
     @Autowired
     private DataSourceFactory dsf;
 
     @Autowired
-    private CountryMapper countryMapper;
+    private CountryGateway countryGateway;
 
     @Override
-    public void save(Man man) throws Exception {
+    public void save(String name, Integer countryId) throws Exception {
         try (Connection con = dsf.get().getConnection();
             Statement stmt = con.createStatement()) {
 
             stmt.executeUpdate(
                 "insert into Man (id, name, country) " +
-                    "values (nextval('man_id_seq'), '" + man.getName() + "', " +
-                    (man.getCountry() != null ? String.valueOf(man.getCountry().getId()) : "NULL") + ")");
+                    "values (nextval('man_id_seq'), '" + name + "', " +
+                    (countryId != null ? String.valueOf(countryId) : "NULL") + ")");
         }
     }
 
     @Override
-    public void update(Man man) throws Exception {
+    public void update(int id, String name, Integer countryId) throws Exception {
         try (Connection con = dsf.get().getConnection();
             Statement stmt = con.createStatement()) {
 
             stmt.executeUpdate(
-                "update Man set name = '" + man.getName() + "', " +
-                    "country = " + (man.getCountry() != null ? String.valueOf(man.getCountry().getId()) : "NULL") + " " +
-                    "where id = " + man.getId());
+                "update Man set name = '" + name + "', " +
+                    "country = " + (countryId != null ? String.valueOf(countryId) : "NULL") + " " +
+                    "where id = " + id);
         }
     }
 
     @Override
-    public void delete(Man man) throws Exception {
+    public void delete(int id) throws Exception {
         try (Connection con = dsf.get().getConnection();
             Statement stmt = con.createStatement()) {
 
-            stmt.executeUpdate("delete from Man where id = " + man.getId());
+            stmt.executeUpdate("delete from Man where id = " + id);
         }
     }
 
     @Override
-    public Man load(int id) throws Exception {
+    public Map<String, Object> load(int id) throws Exception {
         try (Connection con = dsf.get().getConnection();
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery("select id, name, country from Man where id = " + id)) {
 
             while (rs.next()) {
-                Man man = new Man();
-                man.setId(rs.getInt(1));
-                man.setName(rs.getString(2));
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", rs.getInt(1));
+                map.put("name", rs.getString(2));
 
                 Number country = (Number) rs.getObject(3);
                 if (country != null) {
-                    man.setCountry(countryMapper.load(country.intValue()));
+                    map.put("country", countryGateway.load(country.intValue()));
                 }
 
-                return man;
+                return map;
             }
 
             return null;
@@ -79,27 +79,27 @@ public class ManMapperImpl implements ManMapper {
     }
 
     @Override
-    public List<Man> list() throws Exception {
-        List<Man> mans = new ArrayList<>();
+    public List<Map<String, Object>> list() throws Exception {
+        List<Map<String, Object>> maps = new ArrayList<>();
 
         try (Connection con = dsf.get().getConnection();
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery("select id, name, country from Man order by name")) {
 
             while (rs.next()) {
-                Man man = new Man();
-                man.setId(rs.getInt(1));
-                man.setName(rs.getString(2));
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", rs.getInt(1));
+                map.put("name", rs.getString(2));
 
                 Number country = (Number) rs.getObject(3);
                 if (country != null) {
-                    man.setCountry(countryMapper.load(country.intValue()));
+                    map.put("country", countryGateway.load(country.intValue()));
                 }
 
-                mans.add(man);
+                maps.add(map);
             }
         }
 
-        return mans;
+        return maps;
     }
 }

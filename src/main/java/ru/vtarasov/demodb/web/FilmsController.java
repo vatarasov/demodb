@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,7 +12,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.vtarasov.demodb.datasource.DataSourceFactory;
-import ru.vtarasov.demodb.datasource.FilmMapper;
+import ru.vtarasov.demodb.datasource.FilmGateway;
 import ru.vtarasov.demodb.datasource.GenresFinder;
 import ru.vtarasov.demodb.datasource.YearsFinder;
 import ru.vtarasov.demodb.model.Film;
@@ -33,7 +34,7 @@ public class FilmsController {
     private GenresFinder genresFinder;
 
     @Autowired
-    private FilmMapper filmMapper;
+    private FilmGateway filmGateway;
 
     @GetMapping("/films")
     public String list(@RequestParam(name = "str", required = false) String search, HttpServletRequest request, ModelMap model) throws Exception {
@@ -57,7 +58,7 @@ public class FilmsController {
             }
         }
 
-        List<Film> films = filmMapper.list(search, years, genres);
+        List<Film> films = filmGateway.list(search, years, genres).stream().map(Film::new).collect(Collectors.toList());
 
         model.addAttribute("search", search);
         model.addAttribute("years", years);
