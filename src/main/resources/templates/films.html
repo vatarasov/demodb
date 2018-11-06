@@ -6,13 +6,16 @@
         <title>Films</title>
         <link rel="stylesheet" href="styles.css">
     </head>
+    </head>
     <body>
         <a href="https://github.com/vatarasov/demodb">
             <img id="fork-me" src="https://camo.githubusercontent.com/82b228a3648bf44fc1163ef44c62fcc60081495e/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png">
         </a>
         <a id="admin" href="admin">Admin</a>
         <div class="center">
-            <form id="search" action="films"></form>
+            <form id="search" action="films">
+                <input type="submit" id="search_btn">
+            </form>
             <div class="search">
                 <input type="text" name="str" form="search" placeholder="&#128269;" th:value="${search}">
             </div>
@@ -22,7 +25,7 @@
                     <label th:each="year : ${allYears}" th:attrappend="style=${years.contains(year)}?'text-decoration:underline'">
                         <input type="checkbox" th:name="'year_'+${year}" class="search_extra_opt" form="search"
                                th:attrappend="checked=${years.contains(year)}?checked"
-                               onclick="this.parentNode.style.textDecoration=this.checked ? 'underline' : 'none';">
+                               onclick="this.parentNode.style.textDecoration=this.checked ? 'underline' : 'none';document.getElementById('search_btn').click();">
                         [[${year}]]
                     </label>
                 </div>
@@ -31,7 +34,7 @@
                     <label th:each="genre : ${allGenres}" th:attrappend="style=${genres.contains(genre)}?'text-decoration:underline'">
                         <input type="checkbox" th:name="'genre_'+${genre}" class="search_extra_opt" form="search"
                                th:attrappend="checked=${genres.contains(genre)}?checked"
-                               onclick="this.parentNode.style.textDecoration=this.checked ? 'underline' : 'none';">
+                               onclick="this.parentNode.style.textDecoration=this.checked ? 'underline' : 'none';document.getElementById('search_btn').click();">
                         [[${genre}]]
                     </label>
                 </div>

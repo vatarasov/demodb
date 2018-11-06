@@ -70,3 +70,7 @@ div.title {
 div.description {
     text-align: justify;
 }
+
+#search_btn {
+    display: none;
+}
