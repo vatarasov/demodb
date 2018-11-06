@@ -1,6 +1,7 @@
 package ru.vtarasov.demodb.model;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -15,6 +16,7 @@ public class Man {
 
     @Id
     @SequenceGenerator(name="man_id_seq", sequenceName="man_id_seq")
+    @GeneratedValue(generator="man_id_seq")
     private int id;
 
     private String name;

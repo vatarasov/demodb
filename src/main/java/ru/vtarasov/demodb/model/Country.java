@@ -1,6 +1,7 @@
 package ru.vtarasov.demodb.model;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
@@ -12,6 +13,7 @@ import javax.persistence.SequenceGenerator;
 public class Country {
     @Id
     @SequenceGenerator(name = "country_id_seq", sequenceName = "country_id_seq")
+    @GeneratedValue(generator="country_id_seq")
     private int id;
 
     private String name;
