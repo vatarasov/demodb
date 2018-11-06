@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -23,6 +24,7 @@ import static javax.persistence.FetchType.LAZY;
 public class Film {
     @Id
     @SequenceGenerator(name="film_id_seq", sequenceName="film_id_seq")
+    @GeneratedValue(generator="film_id_seq")
     private int id;
 
 
